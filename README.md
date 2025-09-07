@@ -1,55 +1,50 @@
-# Communicate with Newport 1918 power meter in Python 2.7
+# Newport USB API for Python
 
 ## Introduction
-<p align="center"> 
-<img src="https://juluribk.com/images/newport_1918_power_meter.jpg">
-</p>
 
-This python module [newport_1918c.py] contains high level functions to communicate with [Newport 1918 power meter](http://www.newport.com/1918-R-HandHeld-Optical-Power-and-Energy-Meter/509478/1033/info.aspx#tab_Overview) on a Windows computer. It uses python ctypes to access methods in the Newport's usbdll.dll driver. 
+This [Python module](./newp_usb.py) is a wrapper for Newport's official Windows USB DLL. It offers a simple Python API for exchanging SPCI-queries with Newport powermeters inside a pure-Python workflow. For instructions on connecting hardware to a computer, please refer to the official manual for your device.
 
-For connecting the hardware to the computer, see the [reference manual](http://assets.newport.com/webDocuments-EN/images/RevA1918-RPowerMeterUsersManual.pdf)
+## Download
 
-**This module is written for Python 2.7. It should also work with Python 3+ with minor modifications**
+This module requires the official Newport USB Driver. To download it follow these steps:
+  
+1. Go to the [official portal](https://download.newport.com/)
+2. Log in using these credentials  
+    **Username:** `anonymous`  
+    **Password:** (leave empty)
+3. Navigate to the **Software > Newport_USB_Driver** folder
+4. Download the latest driver `.zip`-file from this folder
 
-## Installing the powermeter and usbdriver 
-[Click here to download the newport powermeter Application and driver](http://assets.newport.com/webDocuments-EN/images/Computer_Interface_Software_v3.0.2.zip)
+## Installation
 
-* On a 32 bit computer:
-	1. Unzip the file
-	2. Install the drivers and the power application found PowerMeter 3.0.2\win32
-	3. run both PMSetup32.msi and USBDriverSetup32.msi (in sub folder). This should install drivers and the newport powermeter application at C:\Program Files\Newport
-	4. LIBNAME (argument that is needed to intialize the instrument) in the case  will be r'C:\Program Files\Newport\Newport USB Driver\Bin\usbdll.dll'
+1.  **Extract** the downloaded ZIP-file
+2.  **Navigate** to the subfolder corresponding to your system architecture
+    *   **32-bit:** `PowerMeter 3.0.2\win32`
+    *   **64-bit:** `PowerMeter 3.0.2\x86Onx64`
+3.  **Install** both packages by running the MSI files found in that folder
+    *   **32-bit:** `PMSetup32.msi` and `USBDriverSetup32.msi`
+    *   **64-bit:** `PMSetup32on64.msi` and `USBDriverSetup32on64.msi`
+4.  The software will install to the default location
+    *   **32-bit:** `C:\Program Files\Newport\`
+    *   **64-bit:** `C:\Program Files (x86)\Newport\`
+5.  The required `libpath` argument to initialize the instrument is
+    *   **32-bit:** `r'C:\Program Files\Newport\Newport USB Driver\Bin\usbdll.dll'`
+    *   **64-bit:** `r'C:\Program Files (x86)\Newport\Newport USB Driver\Bin\usbdll.dll'`
 
-* On a 64 bit computer:
-	1. Unzip the file.
-	2. Install the drivers and the power application found PowerMeter 3.0.2\x86Onx64
-	3. run both PMSetup32on64.msi and USBDriverSetup32on64.msi (in sub folder). This should install drivers and the newport powermeter application at C:\Program Files (x86)\Newport
-	4. LIBNAME (argument that is needed to intialize the instrument) in the case  will be r'C:\Program Files (x86)\Newport\Newport USB Driver\Bin\usbdll.dll'
-
-Before you run the python module, make sure that you can run the newport powermeter application. This will ensure that the drivers are installed properly and there is no problem communicating with the instrument.
+Before you run the Python module, make sure that you can run the "Newport Powermeter" application. That confirms that the driver is installed properly and nothing causes problems with hardware connection.
 
 ## Getting the Product ID 
 
-The variable "product_id" is needed to intialize the instrument. For my case, the product_id was 0xCEC7. I am not sure if this will change on another computer. To find the product_id or PID,
+The variable `product_id` is required to intialize the instrument. To construct it follow these steps:
  
 1. Open the Windows Device Manager
 2. Expand the Human Interface Devices node
 3. Double-click the device of interest -- the USB Human Interface Device Properties window appears
-4. Click the Details tab. 
-5. In the Property drop-down box, select Hardware Ids. The product id is some thinglike PID_ABC1, then use product_id = 0xABC1. 
+4. Click the Details tab
+5. In the Property drop-down box, select Hardware Ids. The value will contain "PID_HEXC", then use "0xHEXC" as your `product_id`
 
-[See Here fore more detailed explaination !](http://thecurlybrace.blogspot.com/2010/07/how-to-find-usb-device-vendor-and.html)
+For a more detailed explanation [click here](http://thecurlybrace.blogspot.com/2010/07/how-to-find-usb-device-vendor-and.html).
 
 ## Additional notes
-* There are many methods in the usbdll.dll, you can see all the methods in [NewPDll.h](https://github.com/plasmon360/python_newport_1918_powermeter/blob/master/NewpDll.h). The methods I use to connect/disconnection and read/write commands are:
 
-1. newp_usb_init_system - this function opens all USB instruments.
-2. newp_usb_get_device_info - this function retrieves the USB address of all open instruments.
-3. newp_usb_get_ascii - this function reads the response data from an instrument.
-4. newp_usb_send_ascii - this function sends the passed in command to an instrument.
-5. newp_usb_send_binary - this function sends the passed in binary data to an instrument.
-6. newp_usb_uninit_system - this function closes all USB instruments.
-
-* A full list of commands that can be sent to the instrument can be found in the [reference manual](http://assets.newport.com/webDocuments-EN/images/RevA1918-RPowerMeterUsersManual.pdf)
-
-
+This module enables communication with Newport powermeters using SPCI-commands. For a complete list of commands supported by your device, please refer to its official manual (eg. the [1918-R series manual](https://www.newport.com/medias/sys_master/images/images/haf/h3d/8797247275038/Rev-A-1918-R-Power-Meter-User-s-Manual.pdf)).
